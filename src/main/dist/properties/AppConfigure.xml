@@ -1,0 +1,12 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="manager" class="edu.mcw.rgd.pipelines.StrainVtAnnotation" >
+        <property name="version" value="Strain VT Annotation pipeline -- build Feb 24, 2023" />
+        <property name="dao" ref="dao"/>
+        <property name="createdBy" value="182"/>
+    </bean>
+
+    <bean id="dao" class="edu.mcw.rgd.pipelines.Dao" >
+    </bean>
+</beans>
