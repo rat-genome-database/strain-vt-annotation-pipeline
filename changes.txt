@@ -1,3 +1,6 @@
+Oct 21, 2024
+  updated to java 17
+
 Feb 28, 2023
   fixed typo in build.gradle
 
