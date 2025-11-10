@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="manager" class="edu.mcw.rgd.pipelines.StrainVtAnnotation" >
-        <property name="version" value="Strain VT Annotation pipeline -- build Oct 21, 2024" />
+        <property name="version" value="Strain VT Annotation pipeline -- build Nov 10, 2025" />
         <property name="dao" ref="dao"/>
         <property name="createdBy" value="182"/>
     </bean>

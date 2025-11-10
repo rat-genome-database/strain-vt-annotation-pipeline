@@ -1,3 +1,6 @@
+Nov 10, 2025
+  refactored sql for better readability
+
 Oct 21, 2024
   updated to java 17
 

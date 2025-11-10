@@ -30,8 +30,11 @@ public class Dao {
     }
 
     public List<Annotation> getQtlVtAnnotations() throws Exception {
-        String query = "SELECT a.*,r.species_type_key FROM full_annot a,rgd_ids r "+
-                "WHERE annotated_object_rgd_id=rgd_id AND object_status='ACTIVE' AND aspect=? AND object_key=?";
+        String query = """
+            SELECT a.*,r.species_type_key
+            FROM full_annot a,rgd_ids r
+            WHERE annotated_object_rgd_id=rgd_id AND object_status='ACTIVE' AND aspect=? AND object_key=?
+            """;
         return annotationDAO.executeAnnotationQuery(query, "V", RgdId.OBJECT_KEY_QTLS);
     }
 
