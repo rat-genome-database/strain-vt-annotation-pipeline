@@ -4,6 +4,7 @@ import edu.mcw.rgd.datamodel.RgdId;
 import edu.mcw.rgd.datamodel.Strain;
 import edu.mcw.rgd.datamodel.ontology.Annotation;
 import edu.mcw.rgd.process.CounterPool;
+import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,9 @@ public class StrainVtAnnotation {
     public void run() throws Exception {
         Date dateStart = new Date();
         Date cutoffDate = Utils.addMinutesToDate(dateStart, -5);
+
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+        memoryMonitor.start();
 
         log.info(getVersion());
 
@@ -94,6 +98,9 @@ public class StrainVtAnnotation {
         counters.add("strain VT annots deleted", obsoleteAnnots.size());
 
         log.info(counters.dumpAlphabetically());
+
+        memoryMonitor.stop();
+        log.info(memoryMonitor.getSummary());
 
         String msg = "=== OK === elapsed "+ Utils.formatElapsedTime(dateStart.getTime(), System.currentTimeMillis());
         log.info(msg);
