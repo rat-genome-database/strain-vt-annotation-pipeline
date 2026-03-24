@@ -52,7 +52,6 @@ public class StrainVtAnnotation {
         SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         log.info("  started at: "+sdt.format(dateStart));
         log.info("  "+dao.getConnectionInfo());
-        log.info("===");
 
         CounterPool counters = new CounterPool();
 
