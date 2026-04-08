@@ -1,3 +1,7 @@
+Apr 08, 2026
+  right-align counter values in summary output for better readability
+  updated dependencies
+
 Mar 24, 2026
   updated README.md
   updated dependencies
