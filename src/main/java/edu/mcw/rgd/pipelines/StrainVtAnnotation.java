@@ -96,7 +96,7 @@ public class StrainVtAnnotation {
         dao.deleteAnnotations(obsoleteAnnots);
         counters.add("strain VT annots deleted", obsoleteAnnots.size());
 
-        log.info(counters.dumpAlphabetically());
+        log.info(dumpCountersRightAligned(counters));
 
         memoryMonitor.stop();
         log.info(memoryMonitor.getSummary());
@@ -105,6 +105,46 @@ public class StrainVtAnnotation {
         log.info(msg);
         log.info("");
     }
+    /**
+     * dump counters in alphabetic order, right-aligning the numeric values
+     * so the last digit of every counter is at the same column
+     */
+    String dumpCountersRightAligned(CounterPool counters) {
+        TreeSet<String> names = new TreeSet<>();
+        Enumeration<String> en = counters.getCounterNames();
+        while( en.hasMoreElements() ) {
+            names.add(en.nextElement());
+        }
+
+        // build raw "name : value" pairs and compute max raw line length
+        List<String> rawNames = new ArrayList<>();
+        List<String> rawValues = new ArrayList<>();
+        int maxLen = 0;
+        for( String name: names ) {
+            String val = Utils.formatThousands(counters.get(name));
+            rawNames.add(name);
+            rawValues.add(val);
+            int rawLen = name.length() + 3 + val.length(); // "name : value"
+            if( rawLen > maxLen ) {
+                maxLen = rawLen;
+            }
+        }
+
+        StringBuilder buf = new StringBuilder("========\n");
+        for( int i=0; i<rawNames.size(); i++ ) {
+            String name = rawNames.get(i);
+            String val = rawValues.get(i);
+            int pad = maxLen - (name.length() + 3 + val.length());
+            buf.append(name).append(" : ");
+            for( int j=0; j<pad; j++ ) {
+                buf.append(' ');
+            }
+            buf.append(val).append("\n");
+        }
+        buf.append("=========\n");
+        return buf.toString();
+    }
+
     public void setVersion(String version) {
         this.version = version;
     }
