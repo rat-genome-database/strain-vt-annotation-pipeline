@@ -1,3 +1,6 @@
+May 11, 2026
+  obsolete-row cutoff now captured at main() entry; dropped magic 5-minute buffer; updated dependencies
+
 Apr 08, 2026
   right-align counter values in summary output for better readability
   updated dependencies

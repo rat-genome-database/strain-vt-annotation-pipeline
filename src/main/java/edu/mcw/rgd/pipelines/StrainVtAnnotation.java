@@ -28,21 +28,23 @@ public class StrainVtAnnotation {
 
     public static void main(String[] args) throws Exception {
 
+        // captured before any DB or Spring work; used as the cutoff for
+        // 'obsolete' strain-VT-annotation detection at end of run
+        final Date pipelineStart = new Date();
+
         DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
         new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new FileSystemResource("properties/AppConfigure.xml"));
         StrainVtAnnotation manager = (StrainVtAnnotation) (bf.getBean("manager"));
 
         try {
-            manager.run();
+            manager.run(pipelineStart);
         } catch(Exception e) {
             Utils.printStackTrace(e, manager.log);
             throw e;
         }
     }
 
-    public void run() throws Exception {
-        Date dateStart = new Date();
-        Date cutoffDate = Utils.addMinutesToDate(dateStart, -5);
+    public void run(Date pipelineStart) throws Exception {
 
         MemoryMonitor memoryMonitor = new MemoryMonitor();
         memoryMonitor.start();
@@ -50,7 +52,7 @@ public class StrainVtAnnotation {
         log.info(getVersion());
 
         SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        log.info("  started at: "+sdt.format(dateStart));
+        log.info("  started at: "+sdt.format(pipelineStart));
         log.info("  "+dao.getConnectionInfo());
 
         CounterPool counters = new CounterPool();
@@ -92,7 +94,7 @@ public class StrainVtAnnotation {
         }
 
         // handle obsolete annotations
-        List<Annotation> obsoleteAnnots = dao.getObsoleteStrainVTAnnotations(getCreatedBy(), cutoffDate);
+        List<Annotation> obsoleteAnnots = dao.getObsoleteStrainVTAnnotations(getCreatedBy(), pipelineStart);
         dao.deleteAnnotations(obsoleteAnnots);
         counters.add("strain VT annots deleted", obsoleteAnnots.size());
 
@@ -101,7 +103,7 @@ public class StrainVtAnnotation {
         memoryMonitor.stop();
         log.info(memoryMonitor.getSummary());
 
-        String msg = "=== OK === elapsed "+ Utils.formatElapsedTime(dateStart.getTime(), System.currentTimeMillis());
+        String msg = "=== OK === elapsed "+ Utils.formatElapsedTime(pipelineStart.getTime(), System.currentTimeMillis());
         log.info(msg);
         log.info("");
     }
