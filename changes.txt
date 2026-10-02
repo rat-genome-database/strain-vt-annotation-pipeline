@@ -1,3 +1,6 @@
+Oct 02, 2026
+  load only QTL VT annotations for QTLs that have associated strains (skips ~500k empty strain lookups); obsolete-row cutoff now read from the db clock; updated dependencies
+
 May 11, 2026
   obsolete-row cutoff now captured at main() entry; dropped magic 5-minute buffer; updated dependencies
 

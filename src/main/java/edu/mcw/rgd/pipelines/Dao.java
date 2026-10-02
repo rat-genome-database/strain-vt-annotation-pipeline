@@ -7,6 +7,7 @@ import edu.mcw.rgd.datamodel.Strain;
 import edu.mcw.rgd.datamodel.ontology.Annotation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,11 +30,18 @@ public class Dao {
         return annotationDAO.getConnectionInfo();
     }
 
+    /** current date and time on the database server: the clock that stamps created_date and last_modified_date */
+    public Date getDbSysdate() throws Exception {
+        return new JdbcTemplate(annotationDAO.getDataSource()).queryForObject("SELECT SYSDATE FROM dual", Date.class);
+    }
+
+    /** VT annotations for active QTLs that have at least one associated strain */
     public List<Annotation> getQtlVtAnnotations() throws Exception {
         String query = """
             SELECT a.*,r.species_type_key
             FROM full_annot a,rgd_ids r
-            WHERE annotated_object_rgd_id=rgd_id AND object_status='ACTIVE' AND aspect=? AND object_key=?
+            WHERE a.annotated_object_rgd_id=r.rgd_id AND r.object_status='ACTIVE' AND a.aspect=? AND r.object_key=?
+              AND EXISTS (SELECT 1 FROM qtls q,rgd_qtl_strain qs WHERE q.rgd_id=a.annotated_object_rgd_id AND qs.qtl_key=q.qtl_key)
             """;
         return annotationDAO.executeAnnotationQuery(query, "V", RgdId.OBJECT_KEY_QTLS);
     }

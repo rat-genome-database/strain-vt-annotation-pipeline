@@ -28,37 +28,39 @@ public class StrainVtAnnotation {
 
     public static void main(String[] args) throws Exception {
 
-        // captured before any DB or Spring work; used as the cutoff for
-        // 'obsolete' strain-VT-annotation detection at end of run
-        final Date pipelineStart = new Date();
-
         DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
         new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new FileSystemResource("properties/AppConfigure.xml"));
         StrainVtAnnotation manager = (StrainVtAnnotation) (bf.getBean("manager"));
 
         try {
-            manager.run(pipelineStart);
+            manager.run();
         } catch(Exception e) {
             Utils.printStackTrace(e, manager.log);
             throw e;
         }
     }
 
-    public void run(Date pipelineStart) throws Exception {
+    public void run() throws Exception {
 
+        long startMs = System.currentTimeMillis();
         MemoryMonitor memoryMonitor = new MemoryMonitor();
         memoryMonitor.start();
 
         log.info(getVersion());
 
+        // cutoff for 'obsolete' strain-VT-annotation detection at end of run: read from the db clock,
+        // which also stamps last_modified_date, so the comparison is immune to app/db clock skew;
+        // must be taken before any annotation is inserted or touched in this run
+        Date pipelineStart = dao.getDbSysdate();
+
         SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        log.info("  started at: "+sdt.format(pipelineStart));
+        log.info("  started at: "+sdt.format(pipelineStart)+" (db time)");
         log.info("  "+dao.getConnectionInfo());
 
         CounterPool counters = new CounterPool();
 
         List<Annotation> qtlVtAnnots = dao.getQtlVtAnnotations();
-        counters.add("qtl VT annotations", qtlVtAnnots.size());
+        counters.add("qtl VT annotations with strains", qtlVtAnnots.size());
 
         Set<Integer> annotsUpToDate = new HashSet<>();
 
@@ -103,7 +105,7 @@ public class StrainVtAnnotation {
         memoryMonitor.stop();
         log.info(memoryMonitor.getSummary());
 
-        String msg = "=== OK === elapsed "+ Utils.formatElapsedTime(pipelineStart.getTime(), System.currentTimeMillis());
+        String msg = "=== OK === elapsed "+ Utils.formatElapsedTime(startMs, System.currentTimeMillis());
         log.info(msg);
         log.info("");
     }
