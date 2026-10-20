@@ -1,3 +1,6 @@
+Oct 20, 2026
+  migrated to postgres; updated dependencies
+
 Oct 02, 2026
   load only QTL VT annotations for QTLs that have associated strains (skips ~500k empty strain lookups); obsolete-row cutoff now read from the db clock; updated dependencies
 

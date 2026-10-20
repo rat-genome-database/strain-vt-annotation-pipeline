@@ -32,7 +32,7 @@ public class Dao {
 
     /** current date and time on the database server: the clock that stamps created_date and last_modified_date */
     public Date getDbSysdate() throws Exception {
-        return new JdbcTemplate(annotationDAO.getDataSource()).queryForObject("SELECT SYSDATE FROM dual", Date.class);
+        return new JdbcTemplate(annotationDAO.getDataSource()).queryForObject("SELECT LOCALTIMESTAMP(0)", Date.class);
     }
 
     /** VT annotations for active QTLs that have at least one associated strain */
