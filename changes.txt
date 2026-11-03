@@ -1,3 +1,6 @@
+Nov 03, 2026
+  run.sh: email subject reports OK or FAILED based on the exit code; removed duplicate -jar option
+
 Oct 20, 2026
   migrated to postgres; updated dependencies
 
